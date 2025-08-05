@@ -1,4 +1,4 @@
-Build and Run Image Locally Via Compose: 
+Build and Run Image Locally Via Compose: <br>
 PORT=<PORT_NUMBER> docker-compose up --build
 
 Build, Push, and Run image: 
