@@ -7,4 +7,3 @@ RUN useradd app
 RUN mkdir -p /usr/src/app/instance && chown app:app /usr/src/app/instance
 USER app
 CMD ["python", "src/app.py"]
-

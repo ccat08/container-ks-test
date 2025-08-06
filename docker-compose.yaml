@@ -1,9 +1,31 @@
 services:
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-todo_db}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER:-user}", "-d", "${POSTGRES_DB:-todo_db}"]
+      interval: 8s
+      timeout: 5s
+      retries: 8
+
   to-do-app:
     build: .
+    depends_on:
+      db:
+        condition: service_healthy
     ports:
-      - "${PORT:-8000}:${PORT:-8000}"
+      - "${APP_PORT:-8080}:${APP_PORT:-8080}"
     environment:
-      - PORT=${PORT:-8000}
+      PORT: ${APP_PORT:-8080}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-todo_db}
     volumes:
       - ./data:/usr/src/app/instance
+
+volumes:
+  pgdata:

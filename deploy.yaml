@@ -16,7 +16,34 @@ spec:
         - name: app-container
           image: cato16/py-to-do:latest
           ports:
-            - containerPort: 8000
+            - containerPort: 8080
           env:
+            # Fill out this variable
             - name: PORT
-              value: "8000"
+              value: "8080"
+
+            # Variable values found in secret and config map files
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: to-do-secret1
+                  key: password
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: to-do-config1
+                  key: user
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: to-do-config1
+                  key: db
+            - name: DATABASE_URL
+              value: "postgresql://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-todo_db}"
+
+
+
+# kubectl get secrets 
+# kubectl get configmaps
+# kubectl create secret generic to-do-secret1 --from-literal='password=password1'
+# kubectl create configmap to-do-config1 --from-literal='user=user1' --from-literal='db=db1'

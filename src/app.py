@@ -5,7 +5,10 @@ import os
 app = Flask(__name__)
 
 # Configuring the SQLAlchemy database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
+
+uri = os.environ.get('DATABASE_URL', 'postgresql://user:password@db:5432/todo_db')
+print(f"Using database URI: {uri}")  # Debugging line to check the database URI
+app.config['SQLALCHEMY_DATABASE_URI'] = uri
 db = SQLAlchemy(app)
 
 # TodoItem model representing a table in the database
@@ -54,6 +57,6 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     
-    port = int(os.environ.get("PORT", 5000))
+    port = int(os.environ.get("PORT", 8000))
     app.run(host='0.0.0.0', port=port, debug=True)
     # app.run(debug=True)
